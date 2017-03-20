@@ -46,7 +46,7 @@ public class TabActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //当tabmode 为MODE_SCROLLABLE时，会忽略tabgravity属性
+        //当tabmode 为MODE_SCROLLABLE时,会忽略tabgravity属性
         switch (item.getItemId()){
             case android.R.id.home:
                 finish();
