@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_drawerlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <!-- 当前界面显示内容，必须放在一个layout容器内显示 -->
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/activity_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!--使用Toolbar时，需要去掉主题标题，且与AppBarLayout一起使用
+             <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+             <item name="windowActionBar">false</item>
+             <item name="windowNoTitle">true</item>
+             </style>-->
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        </android.support.design.widget.AppBarLayout>
+
+        <!-- Toolbar下面的控件需要使用layout包裹起来，并且设置 app:layout_behavior="@string/appbar_scrolling_view_behavior"
+         滚动行为属性，告知layout应滚动到Toolbar下面 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="To TabLayout Activity"
+                android:onClick="toTabActivity"/>
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Hello World!" />-->
+        </LinearLayout>
+
+        <!-- 添加margin是兼容5.0设备，显示边距 -->
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/main_floating_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="@dimen/fab_margin_bottom"
+            android:layout_marginRight="@dimen/fab_margin_right"
+            android:src="@mipmap/ic_launcher"
+            app:borderWidth="0dp"
+            app:fabSize="normal" />
+    </android.support.design.widget.CoordinatorLayout>
+
+    <!-- drawer 菜单，需要放在布局最下面 -->
+    <android.support.design.widget.NavigationView
+        android:id="@+id/main_navigationview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        app:itemIconTint="@color/colorTint"
+        app:itemTextColor="@color/colorTint"
+        app:headerLayout="@layout/main_drawer_header"
+        app:menu="@menu/main_drawer_menu" />
+</android.support.v4.widget.DrawerLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/main_drawer_item1"
+        app:showAsAction="always"
+        android:title="tabmode" >
+        <menu>
+            <item
+                android:id="@+id/tabmode_fixed"
+                android:icon="@mipmap/ic_launcher"
+                android:title="FIXED" />
+            <item
+                android:id="@+id/tabmode_scrollable"
+                android:icon="@mipmap/ic_launcher"
+                android:title="SCROLLABLE" />
+        </menu>
+    </item>
+    <item
+        android:icon="@mipmap/ic_launcher"
+        android:title="tabgravity">
+        <menu>
+            <item
+                android:id="@+id/tabgravity_center"
+                android:icon="@mipmap/ic_launcher"
+                android:title="CENTER" />
+            <item
+                android:id="@+id/tabgravity_fill"
+                android:icon="@mipmap/ic_launcher"
+                android:title="FILL" />
+        </menu>
+    </item>
+</menu>

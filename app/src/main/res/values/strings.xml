@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">JustDoIt</string>
+    <string name="title_activity_tab">TabActivity</string>
+</resources>
