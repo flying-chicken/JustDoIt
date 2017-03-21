@@ -7,6 +7,7 @@
     android:fitsSystemWindows="true">
 
     <!-- 当前界面显示内容，必须放在一个layout容器内显示 -->
+    <!-- 设置主题的目的是为了让标题文字颜色适配主题色 -->
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/activity_root"
         android:layout_width="match_parent"
@@ -14,40 +15,77 @@
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <!--使用Toolbar时，需要去掉主题标题，且与AppBarLayout一起使用
-             <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-             <item name="windowActionBar">false</item>
-             <item name="windowNoTitle">true</item>
-             </style>-->
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            android:layout_height="256dp">
+            <!-- enterAlwaysCollapsed- 这个标志定义了 View 是如何回到屏幕的。当你的 view 已经声明了一个最小高度(minHeight) 并且你使用了这个标志，
+                                       你的 View 只有在回到这个最小的高度的时候才会展开，只有当 view 已经到达顶部之后它才会重新展开全部高度。
+                 exitUntilCollapsed- View 将关闭滚动直到它被折叠起来(有 minHeight) 并且一直保持这样
+                 共四个参数，其他两个参看 activity_tab.xml
+             -->
+            <!-- 要想Toolbar能够滚动扩展或收缩，需要使用该layout包裹Toolbar，当使用该layout的时候，需要在java代码里
+                 设置该layout的（收缩或扩展）标题
+                 app:expandedTitleMarginStart="64dp" 可以设置文字（收缩~展开动画时）的位置
+                 app:contentScrim="?attr/colorPrimary" 当收缩到最小高度时，显示的背景色
+             -->
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/main_ctlayout"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+                android:layout_height="match_parent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:contentScrim="?attr/colorPrimary">
+                <!-- 设置CollapsingToolbarLayout展开时的背景图片 -->
+                <!-- app:layout_collapseMode="parallax" 滚动模式 none 跟随父控件滚动 ；pin 固定位置 ；parallax 阻尼滚动
+                    app:layout_collapseParallaxMultiplier="0.7" 设置阻尼滚动参数，0.0~1.0之间
+                 -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/header"
+                    android:scaleType="centerCrop"
+                    app:layout_collapseMode="parallax"
+                    app:layout_collapseParallaxMultiplier="0.5"/>
+                <!--使用Toolbar时，需要去掉主题标题，且与AppBarLayout一起使用
+                 <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+                 <item name="windowActionBar">false</item>
+                 <item name="windowNoTitle">true</item>
+                 </style>
+                 app:layout_collapseMode="pin" :当 Toolbar在滚动的时候，保持在屏幕顶部而不滚出屏幕
+                 当被CollapsingToolbarLayout包裹时，可以设置背景为透明色以显示ToolbarLayout的背景图片，其他时候可以设置为主题色
+                 -->
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@android:color/transparent"
+                    android:minHeight="?attr/actionBarSize"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:layout_collapseMode="pin" />
+            </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 
         <!-- Toolbar下面的控件需要使用layout包裹起来，并且设置 app:layout_behavior="@string/appbar_scrolling_view_behavior"
          滚动行为属性，告知layout应滚动到Toolbar下面 -->
-        <LinearLayout
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_height="800dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <Button
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="To TabLayout Activity"
-                android:onClick="toTabActivity"/>
-            <!--<TextView-->
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="toTabActivity"
+                    android:text="To TabLayout Activity" />
+                <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:text="Hello World!" />-->
-        </LinearLayout>
-
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
         <!-- 添加margin是兼容5.0设备，显示边距 -->
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/main_floating_button"
@@ -67,8 +105,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="left"
+        app:headerLayout="@layout/main_drawer_header"
         app:itemIconTint="@color/colorTint"
         app:itemTextColor="@color/colorTint"
-        app:headerLayout="@layout/main_drawer_header"
         app:menu="@menu/main_drawer_menu" />
 </android.support.v4.widget.DrawerLayout>

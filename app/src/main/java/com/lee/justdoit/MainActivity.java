@@ -2,6 +2,7 @@ package com.lee.justdoit;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,11 +32,17 @@ public class MainActivity extends AppCompatActivity {
         setToolbar();
         setNavigationView();
         snackbarDemo();
+        setCollapsingToolbarLayout();
     }
 
     private void setToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
+
+    private void setCollapsingToolbarLayout(){
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.main_ctlayout);
+        collapsingToolbarLayout.setTitle("JUST GO");
     }
 
     private void setNavigationView(){
