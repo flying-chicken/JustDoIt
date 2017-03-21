@@ -10,11 +10,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.lee.tablayout.TabActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private CollapsingToolbarLayout collapsingToolbarLayout;
+
+    private RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,9 +98,31 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, TabActivity.class));
     }
 
+    public void loadImage(View view){
+        String url = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490074741640&di=f98224ec4a876da82504d5c4ee79803d&imgtype=0&src=http%3A%2F%2Fpic.58pic.com%2F58pic%2F17%2F16%2F41%2F06G58PICfVz_1024.jpg";
+        ImageView imageView = (ImageView) findViewById(R.id.main_image);
+        Glide.with(this).load(url).into(imageView);
+    }
+
+    private void initRecyclerView(){
+        recyclerView = (RecyclerView) findViewById(R.id.main_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+    }
+
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 }

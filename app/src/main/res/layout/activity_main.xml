@@ -66,26 +66,37 @@
 
         <!-- Toolbar下面的控件需要使用layout包裹起来，并且设置 app:layout_behavior="@string/appbar_scrolling_view_behavior"
          滚动行为属性，告知layout应滚动到Toolbar下面 -->
-        <android.support.v4.widget.NestedScrollView
+        <android.support.v7.app.AlertController.RecyclerView
+            android:id="@+id/main_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="800dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        <!--<android.support.v4.widget.NestedScrollView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="800dp"-->
+            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:orientation="vertical">-->
 
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="toTabActivity"
-                    android:text="To TabLayout Activity" />
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Hello World!" />-->
-            </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+                <!--<Button-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:onClick="toTabActivity"-->
+                    <!--android:text="To TabLayout Activity" />-->
+                <!--<Button-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:onClick="loadImage"-->
+                    <!--android:text="Load Image"/>-->
+                <!--<ImageView-->
+                    <!--android:id="@+id/main_image"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="150dp"-->
+                    <!--android:scaleType="centerCrop"/>-->
+            <!--</LinearLayout>-->
+        <!--</android.support.v4.widget.NestedScrollView>-->
         <!-- 添加margin是兼容5.0设备，显示边距 -->
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/main_floating_button"
