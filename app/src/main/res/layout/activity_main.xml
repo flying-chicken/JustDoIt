@@ -66,7 +66,7 @@
 
         <!-- Toolbar下面的控件需要使用layout包裹起来，并且设置 app:layout_behavior="@string/appbar_scrolling_view_behavior"
          滚动行为属性，告知layout应滚动到Toolbar下面 -->
-        <android.support.v7.app.AlertController.RecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/main_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -20,7 +20,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.lee.adapter.MainRecyclerAdapter;
 import com.lee.tablayout.TabActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         setNavigationView();
         snackbarDemo();
         setCollapsingToolbarLayout();
+
+        initRecyclerView();
     }
 
     private void setToolbar(){
@@ -100,14 +106,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadImage(View view){
         String url = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490074741640&di=f98224ec4a876da82504d5c4ee79803d&imgtype=0&src=http%3A%2F%2Fpic.58pic.com%2F58pic%2F17%2F16%2F41%2F06G58PICfVz_1024.jpg";
-        ImageView imageView = (ImageView) findViewById(R.id.main_image);
-        Glide.with(this).load(url).into(imageView);
+//        ImageView imageView = (ImageView) findViewById(R.id.main_image);
+//        Glide.with(this).load(url).into(imageView);
     }
 
     private void initRecyclerView(){
         recyclerView = (RecyclerView) findViewById(R.id.main_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new MainRecyclerAdapter(this,createItems()));
+    }
 
+    private List<String> createItems(){
+        List<String> items = new ArrayList<String>();
+        for(char i='A'; i<= 'Z'; i++){
+            items.add(String.valueOf(i));
+        }
+        return items;
     }
 
     @Override
