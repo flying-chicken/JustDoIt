@@ -27,7 +27,8 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public MViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        MViewHolder holder = new MViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_main_recycler_item,null));
+        //此处必须这样添加布局，否则会导致item宽度不能全屏
+        MViewHolder holder = new MViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_main_recycler_item,parent,false));
         return holder;
     }
 
