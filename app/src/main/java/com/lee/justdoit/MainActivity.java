@@ -115,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.main_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MainRecyclerAdapter(this,createItems()));
+        //是否去掉padding，默认为true（为true时，设置的padding无效）
+        recyclerView.setClipToPadding(false);
         recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
     }
 
