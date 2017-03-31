@@ -19,6 +19,11 @@ import java.util.List;
 public class MainRecyclerAdapter extends RecyclerView.Adapter {
     private List<String> items;
     private Context context;
+    private MainItemClickListener itemClickListener;
+
+    public interface MainItemClickListener{
+        void onItemClickListener(View view,int position);
+    }
 
     public MainRecyclerAdapter(Context context,List<String> items) {
         this.context = context;
@@ -33,9 +38,17 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         MViewHolder mholder = (MViewHolder) holder;
         mholder.tv.setText(items.get(position));
+        if(itemClickListener != null){
+            mholder.tv.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    itemClickListener.onItemClickListener(v,position);
+                }
+            });
+        }
     }
 
     @Override
@@ -49,5 +62,9 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
             super(itemView);
             tv = (TextView) itemView.findViewById(R.id.tv_main_recycler_item);
         }
+    }
+
+    public void setOnItemClickListener(MainItemClickListener l){
+        itemClickListener = l;
     }
 }
