@@ -14,6 +14,7 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/main_appbarlayout"
             android:layout_width="match_parent"
             android:layout_height="256dp">
             <!-- enterAlwaysCollapsed- 这个标志定义了 View 是如何回到屏幕的。当你的 view 已经声明了一个最小高度(minHeight) 并且你使用了这个标志，
