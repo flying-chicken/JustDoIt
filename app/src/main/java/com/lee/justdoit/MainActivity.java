@@ -60,10 +60,12 @@ public class MainActivity extends AppCompatActivity {
         items.add("TabLayout");
         items.add("Glide");
         items.add("RecyclerView");
+        items.add("TestActivity");
         activities = new ArrayList<>();
         activities.add("com.lee.tablayout.TabActivity");
         activities.add("");
         activities.add("");
+        activities.add("com.lee.justdoit.TestActivity");
 
     }
 
