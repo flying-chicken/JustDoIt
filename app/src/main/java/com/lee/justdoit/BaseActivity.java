@@ -1,6 +1,8 @@
 package com.lee.justdoit;
 
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
@@ -15,6 +17,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 public class BaseActivity extends AppCompatActivity {
     protected  final int DEFAULT_TOOLBAR_HEIGHT = 56;
@@ -25,19 +28,15 @@ public class BaseActivity extends AppCompatActivity {
     protected AppBarLayout appBarLayout;
     protected CollapsingToolbarLayout toolbarLayout;
     protected Toolbar toolbar;
+    protected FloatingActionButton faButton;
+    protected ImageView appbarImage;
 
-    protected void setAppBarHeight(int dp){
-        if(dp < DEFAULT_TOOLBAR_HEIGHT) dp = DEFAULT_TOOLBAR_HEIGHT;
-        ViewGroup.LayoutParams p = appBarLayout.getLayoutParams();
-        p.height = dip2px(dp);
-        appBarLayout.setLayoutParams(p);
-    }
-
-    /** 根据返回的值来设置AppbarLayout 的高度*/
-    protected int getAppBarheight(int dp){
-        if(dp < DEFAULT_TOOLBAR_HEIGHT) dp = DEFAULT_TOOLBAR_HEIGHT;
-        return dip2px(dp);
-    }
+//
+//    /** 根据返回的值来设置AppbarLayout 的高度*/
+//    protected int getAppBarheight(int dp){
+//        if(dp < DEFAULT_TOOLBAR_HEIGHT) dp = DEFAULT_TOOLBAR_HEIGHT;
+//        return dip2px(dp);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +45,6 @@ public class BaseActivity extends AppCompatActivity {
 
         initParams();
         initViews();
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
     }
 
     @Override
@@ -71,12 +60,12 @@ public class BaseActivity extends AppCompatActivity {
         bShowToolbar = true;
     }
 
-    protected void initViews(){
+    private void initViews(){
         rootLayout = (CoordinatorLayout) findViewById(R.id.base_coordinatorlayout);
         appBarLayout = (AppBarLayout) findViewById(R.id.base_appbarlayout);
         toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.base_ctblayout);
-//        setAppBarHeight(getAppBarheight());
         toolbar = (Toolbar) findViewById(R.id.base_toolbar);
+        toolbar.setBackgroundResource(R.color.colorPrimary);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -84,16 +73,51 @@ public class BaseActivity extends AppCompatActivity {
         if(!bShowToolbar){
             toolbarLayout.setVisibility(View.GONE);
         }
+        appbarImage = (ImageView) findViewById(R.id.base_appbar_img);
+        faButton = (FloatingActionButton) findViewById(R.id.base_fab);
     }
 
-    protected void setContent(int resId){
+    public void setAppBarHeight(int dp){
+        if(dp < DEFAULT_TOOLBAR_HEIGHT) {
+            dp = DEFAULT_TOOLBAR_HEIGHT;
+            toolbar.setBackgroundResource(R.color.colorPrimary);
+        }else {
+            toolbar.setBackgroundResource(android.R.color.transparent);
+        }
+        ViewGroup.LayoutParams p = appBarLayout.getLayoutParams();
+        p.height = dip2px(dp);
+        appBarLayout.setLayoutParams(p);
+    }
+
+    public void setAppbarImage(Drawable drawable){
+        appbarImage.setImageDrawable(drawable);
+    }
+
+    public void setAppbarImage(int resId){
+        appbarImage.setImageResource(resId);
+    }
+
+    public void setAppbarImage(Bitmap bitmap){
+        appbarImage.setImageBitmap(bitmap);
+    }
+
+    public void setFAButtonAnchor(int targetId,int gravity){
+        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) faButton.getLayoutParams();
+        lp.gravity = Gravity.NO_GRAVITY;
+        lp.setMargins(0,0,0,0);
+        lp.setAnchorId(targetId);
+        lp.anchorGravity = gravity;
+        faButton.setLayoutParams(lp);
+    }
+
+    public void setContent(int resId){
         rootLayout.addView(getLayoutInflater().inflate(resId,rootLayout,false),1);
     }
 
     public  void setAtyTitle(String title){
         toolbarLayout.setTitle(title);
         toolbar.setTitle(title);
-        getSupportActionBar().setTitle(title);
+//        getSupportActionBar().setTitle(title);
     }
 
     public void setAtyTitle(int id){

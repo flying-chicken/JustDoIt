@@ -1,7 +1,9 @@
 package com.lee.justdoit;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.view.Gravity;
 import android.view.ViewGroup;
 
 /**
@@ -14,17 +16,12 @@ public class TestActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setAtyTitle("TestHHHHH");
-        setAppBarHeight(256);
+//        setAtyTitle("TestHH");
+//        setAppBarHeight(256);
+
         setContent(R.layout.content_base);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.test_fab);
-//        ((ViewGroup)fab.getParent()).removeView(fab);
-//        rootLayout.addView(fab);
+        setAppbarImage(R.mipmap.header);
+        setFAButtonAnchor(R.id.base_appbarlayout, Gravity.BOTTOM|Gravity.END|Gravity.RIGHT);
     }
-
-//    @Override
-//    protected int getAppBarheight() {
-//        return dip2px(256);
-//    }
 }

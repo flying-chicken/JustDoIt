@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="TextView" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="TextView" />
+    </RelativeLayout>
     <!-- layout_anchor 设置FAB锚点，即基于某个控件显示
-        layout_anchorGravity
+        layout_anchorGravity 设置FAB相对锚点的位置
     -->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/test_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_dialog_email"
-        app:layout_anchor="@id/base_appbarlayout"
-        app:layout_anchorGravity="bottom|end|right"/>
-</RelativeLayout>
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/test_fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:layout_anchor="@id/base_appbarlayout"-->
+        <!--app:layout_anchorGravity="bottom|end|right"-->
+        <!--app:srcCompat="@android:drawable/ic_dialog_email" />-->
+</FrameLayout>
