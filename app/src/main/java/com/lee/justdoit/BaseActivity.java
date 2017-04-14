@@ -104,7 +104,7 @@ public class BaseActivity extends AppCompatActivity {
     public void setFAButtonAnchor(int targetId,int gravity){
         CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) faButton.getLayoutParams();
         lp.gravity = Gravity.NO_GRAVITY;
-        lp.setMargins(0,0,0,0);
+        lp.setMargins(0,0,(int)getResources().getDimension(R.dimen.fab_margin_right),0);
         lp.setAnchorId(targetId);
         lp.anchorGravity = gravity;
         faButton.setLayoutParams(lp);
@@ -115,8 +115,10 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public  void setAtyTitle(String title){
+        appBarLayout.setExpanded(true,false);
         toolbarLayout.setTitle(title);
         toolbar.setTitle(title);
+
 //        getSupportActionBar().setTitle(title);
     }
 

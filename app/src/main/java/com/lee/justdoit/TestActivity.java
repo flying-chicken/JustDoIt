@@ -16,8 +16,8 @@ public class TestActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        setAtyTitle("TestHH");
-//        setAppBarHeight(256);
+        setAtyTitle("TestHH");
+        setAppBarHeight(256);
 
         setContent(R.layout.content_base);
 
