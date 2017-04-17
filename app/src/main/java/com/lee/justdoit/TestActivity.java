@@ -17,11 +17,11 @@ public class TestActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
 
         setAtyTitle("TestHH");
-        setAppBarHeight(256);
+//        setAppBarHeight(256);
 
         setContent(R.layout.content_base);
 
-        setAppbarImage(R.mipmap.header);
-        setFAButtonAnchor(R.id.base_appbarlayout, Gravity.BOTTOM|Gravity.END|Gravity.RIGHT);
+//        setAppbarImage(R.mipmap.header);
+//        setFAButtonAnchor(R.id.base_appbarlayout);
     }
 }

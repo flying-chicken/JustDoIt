@@ -101,6 +101,18 @@ public class BaseActivity extends AppCompatActivity {
         appbarImage.setImageBitmap(bitmap);
     }
 
+    public void setFAButtonImage(Drawable drawable){
+        faButton.setImageDrawable(drawable);
+    }
+
+    public void setFAButtonImage(Bitmap bitmap){
+        faButton.setImageBitmap(bitmap);
+    }
+
+    public void setFAButtonImage(int resId){
+        faButton.setImageResource(resId);
+    }
+
     public void setFAButtonAnchor(int targetId,int gravity){
         CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) faButton.getLayoutParams();
         lp.gravity = Gravity.NO_GRAVITY;
@@ -108,6 +120,10 @@ public class BaseActivity extends AppCompatActivity {
         lp.setAnchorId(targetId);
         lp.anchorGravity = gravity;
         faButton.setLayoutParams(lp);
+    }
+
+    public void setFAButtonAnchor(int targetId){
+        setFAButtonAnchor(targetId, Gravity.BOTTOM|Gravity.END|Gravity.RIGHT);
     }
 
     public void setContent(int resId){
