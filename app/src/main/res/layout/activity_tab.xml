@@ -30,9 +30,9 @@
             android:id="@+id/tablayout_tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.NoActionBar.AppBarOverlay"
-            app:layout_scrollFlags="scroll|enterAlways"/>
-
+            android:theme="@style/AppTheme.NoActionBar.AppBarOverlay"/>
+        <!-- 不设置则当滚动时，固定在顶部 -->
+        <!--app:layout_scrollFlags="scroll|enterAlways"-->
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_tab" />

@@ -99,14 +99,18 @@
             <!--</LinearLayout>-->
         <!--</android.support.v4.widget.NestedScrollView>-->
         <!-- 添加margin是兼容5.0设备，显示边距 -->
+        <!-- layout_anchor 设置FAB锚点，即基于某个控件显示
+        layout_anchorGravity 设置FAB相对锚点的位置,当设置锚点时，不能设置自身的layout_gravity属性
+        -->
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/main_floating_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
             android:layout_marginBottom="@dimen/fab_margin_bottom"
             android:layout_marginRight="@dimen/fab_margin_right"
             android:src="@mipmap/ic_launcher"
+            app:layout_anchor="@+id/main_appbarlayout"
+            app:layout_anchorGravity="bottom|right|end"
             app:borderWidth="0dp"
             app:fabSize="normal" />
     </android.support.design.widget.CoordinatorLayout>
