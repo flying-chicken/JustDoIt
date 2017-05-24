@@ -11,6 +11,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -23,6 +24,8 @@ public class BaseActivity extends AppCompatActivity {
     protected  final int DEFAULT_TOOLBAR_HEIGHT = 56;
     protected boolean bShowActionButton;
     protected boolean bShowToolbar;
+    protected boolean bCollapseTollbar;
+    protected boolean bShowTabLayout;
 
     protected CoordinatorLayout rootLayout;
     protected AppBarLayout appBarLayout;
@@ -30,13 +33,14 @@ public class BaseActivity extends AppCompatActivity {
     protected Toolbar toolbar;
     protected FloatingActionButton faButton;
     protected ImageView appbarImage;
+    protected TabLayout tabLayout;
 
-//
-//    /** 根据返回的值来设置AppbarLayout 的高度*/
-//    protected int getAppBarheight(int dp){
+
+    /** 根据返回的值来设置AppbarLayout 的高度*/
+    protected int getAppBarheight(){
 //        if(dp < DEFAULT_TOOLBAR_HEIGHT) dp = DEFAULT_TOOLBAR_HEIGHT;
-//        return dip2px(dp);
-//    }
+        return DEFAULT_TOOLBAR_HEIGHT;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,26 +62,71 @@ public class BaseActivity extends AppCompatActivity {
     protected void initParams(){
         bShowActionButton = true;
         bShowToolbar = true;
+        bShowTabLayout = true;
     }
 
     private void initViews(){
         rootLayout = (CoordinatorLayout) findViewById(R.id.base_coordinatorlayout);
-        appBarLayout = (AppBarLayout) findViewById(R.id.base_appbarlayout);
-        toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.base_ctblayout);
-        toolbar = (Toolbar) findViewById(R.id.base_toolbar);
-        toolbar.setBackgroundResource(R.color.colorPrimary);
+        initToolbar();
+        initTabLayout();
+        initFAB();
+    }
+
+    private void initToolbar(){
+        int appbarH = getAppBarheight();
+        if(appbarH > DEFAULT_TOOLBAR_HEIGHT){
+            appBarLayout = (AppBarLayout) getLayoutInflater().inflate(R.layout.collapse_toolbar_layout,rootLayout,false);
+            toolbarLayout = (CollapsingToolbarLayout) appBarLayout.findViewById(R.id.base_ctblayout);
+            toolbar = (Toolbar) appBarLayout.findViewById(R.id.base_toolbar);
+            appbarImage = (ImageView) appBarLayout.findViewById(R.id.base_appbar_img);
+            setAppBarHeight(appbarH);
+            bCollapseTollbar = true;
+        }else{
+            appBarLayout = (AppBarLayout) getLayoutInflater().inflate(R.layout.toolbar_layout,rootLayout,false);
+            toolbar = (Toolbar) appBarLayout.findViewById(R.id.base_toolbar);
+            bCollapseTollbar = false;
+        }
+        rootLayout.addView(appBarLayout,0);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if(!bShowToolbar){
-            toolbarLayout.setVisibility(View.GONE);
+            if(!bShowTabLayout){
+                appBarLayout.setVisibility(View.GONE);
+            }else if(bCollapseTollbar){
+                toolbarLayout.setVisibility(View.GONE);
+            }else{
+                toolbar.setVisibility(View.GONE);
+            }
         }
-        appbarImage = (ImageView) findViewById(R.id.base_appbar_img);
-        faButton = (FloatingActionButton) findViewById(R.id.base_fab);
     }
 
-    public void setAppBarHeight(int dp){
+    private void initFAB(){
+        faButton = (FloatingActionButton) findViewById(R.id.base_fab);
+        if(!bShowActionButton)
+            faButton.setVisibility(View.GONE);
+    }
+
+    private void initTabLayout(){
+        tabLayout = (TabLayout) appBarLayout.findViewById(R.id.base_tablayout);
+        if(!bShowTabLayout){
+            tabLayout.setVisibility(View.GONE);
+            return;
+        }else{
+            tabLayout.setVisibility(View.VISIBLE);
+        }
+        addTabs(3);
+    }
+
+    private void addTabs(int count){
+        tabLayout.removeAllTabs();
+        for(int i=1; i<= count; i++){
+            tabLayout.addTab(tabLayout.newTab().setText("TAB"+i));
+        }
+    }
+
+    private void setAppBarHeight(int dp){
         if(dp < DEFAULT_TOOLBAR_HEIGHT) {
             dp = DEFAULT_TOOLBAR_HEIGHT;
             toolbar.setBackgroundResource(R.color.colorPrimary);
@@ -90,14 +139,17 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void setAppbarImage(Drawable drawable){
+        if(appbarImage == null || !bCollapseTollbar) return;
         appbarImage.setImageDrawable(drawable);
     }
 
     public void setAppbarImage(int resId){
+        if(appbarImage == null || !bCollapseTollbar) return;
         appbarImage.setImageResource(resId);
     }
 
     public void setAppbarImage(Bitmap bitmap){
+        if(appbarImage == null || !bCollapseTollbar) return;
         appbarImage.setImageBitmap(bitmap);
     }
 
@@ -114,6 +166,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void setFAButtonAnchor(int targetId,int gravity){
+        if(targetId == R.id.base_appbarlayout && !bCollapseTollbar) return;
         CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) faButton.getLayoutParams();
         lp.gravity = Gravity.NO_GRAVITY;
         lp.setMargins(0,0,(int)getResources().getDimension(R.dimen.fab_margin_right),0);
@@ -131,11 +184,12 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public  void setAtyTitle(String title){
-        appBarLayout.setExpanded(true,false);
-        toolbarLayout.setTitle(title);
-        toolbar.setTitle(title);
-
-//        getSupportActionBar().setTitle(title);
+        if(bCollapseTollbar)
+            toolbarLayout.setTitle(title);
+        else{
+//            toolbar.setTitle(title);
+            getSupportActionBar().setTitle(title);
+        }
     }
 
     public void setAtyTitle(int id){
