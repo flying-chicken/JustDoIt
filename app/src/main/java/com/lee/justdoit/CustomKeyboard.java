@@ -14,6 +14,7 @@ import android.inputmethodservice.Keyboard.Key;
 import android.inputmethodservice.KeyboardView;
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,17 +25,21 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class CustomKeyboard extends InputMethodService implements OnKeyboardActionListener {
+public class CustomKeyboard extends InputMethodService implements OnKeyboardActionListener{
 	private KeyboardView keyboardView;
 	private Keyboard keyboard;
 	private boolean isShowing = false;
@@ -76,46 +81,27 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 		return this;
 	}
 
-	public CustomKeyboard addAllVisibleEditTExtFromView(View parent){
-		int i=1;
-		for(View view : getAllChildViews(parent)){
-			if(view instanceof EditText){
-//				if(isViewVisible(view)){
-					Log.e(" *---*-*-*- ",""+ i++);
-					edts.add((EditText)view);
-//				}
-			}
-		}
-		return this;
-	}
-
 	public CustomKeyboard removeAllEditText(){
 		edts.clear();
 		return this;
 	}
 
 	public CustomKeyboard addEditText(EditText edt) {
-//		for(EditText e : edts){
-//			if((Integer)e.getTag() == (Integer) edt.getTag()) {
-//				Log.e(" ---- ","tag is same =  "+(Integer) edt.getTag());
-//				return this;
-//			}
-//		}
-		edts.add(edt);
-		return this;
-	}
-
-	public CustomKeyboard addEditText(EditText edt, int position) {
-		Log.e(" ---- ","  child position =  "+position);
-        boolean canAdd = true;
-		edt.setTag(position);
-		for(EditText e : edts){
-            Log.e(" ---- ","  child tag =  "+(Integer)e.getTag());
-			if((Integer)e.getTag() == position) canAdd = false;
+		Log.e(" --- "," add text with tag = "+edt.getTag());
+		if(edt.getTag() == null){
+			edts.add(edt);
+			return this;
 		}
-		if(canAdd )
-		    edts.add(edt);
-//		edts.add(position,edt);
+		boolean exist = false;
+		//判断是否存在该tag的edittext，如果存在，则替换掉
+		for(int i=0; i< edts.size(); i++){
+			EditText e = edts.get(i);
+			if((Integer)e.getTag() == (Integer) edt.getTag()){
+				edts.set(i,edt);
+				exist = true;
+			}
+		}
+		if(!exist) edts.add(edt);
 		return this;
 	}
 
@@ -133,6 +119,22 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 		return this;
 	}
 
+	//该view是否在屏幕上可见
+	private boolean isViewVisible(View view){
+		Point p = new Point();
+		aty.getWindowManager().getDefaultDisplay().getSize(p);
+		int screenWidth = p.x;
+		int screenHeight = p.y;
+		Rect rect = new Rect(0, 0, screenWidth, screenHeight);
+		int[] location = new int[2];
+		view.getLocationInWindow(location);
+		return view.getLocalVisibleRect(rect) && view.hasWindowFocus();
+//        if (view.getLocalVisibleRect(rect)) {
+//            return true;
+//        }
+//        return false;
+	}
+
 	public boolean isShowing() {
 		return isShowing;
 	}
@@ -147,80 +149,31 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 		return parent;
 	}
 
-	//
-	private List<View> getAllChildViews(View view) {
-		List<View> allchildren = new ArrayList<View>();
-		if(!(view instanceof ViewGroup)){
-			allchildren.add(view);
-		}else{
-			ViewGroup vp = (ViewGroup)view;
-			for (int i = 0; i < vp.getChildCount(); i++) {
-				Log.e(" ---- ","  child count =  "+i);
-				View viewchild = vp.getChildAt(i);
-				if(!(viewchild instanceof ViewGroup))allchildren.add(viewchild);
-				else allchildren.addAll(getAllChildViews(viewchild));
-			}
-		}
-		return allchildren;
-	}
-
-	//该view是否在屏幕上可见
-	private boolean isViewVisible(View view){
-		Point p = new Point();
-		aty.getWindowManager().getDefaultDisplay().getSize(p);
-		int screenWidth = p.x;
-		int screenHeight = p.y;
-		Rect rect = new Rect(0, 0, screenWidth, screenHeight);
-		int[] location = new int[2];
-		view.getLocationInWindow(location);
-		if (view.getLocalVisibleRect(rect)) {
-			return true;
-		}
-		return false;
-	}
 
 	public CustomKeyboard prepare() {
-		if(edts.size() == 0) return this;
+//		if(edts.size() == 0) return this;
 		for (int i = 0; i < edts.size(); i++) {
 			EditText edt = edts.get(i);
 			if(edt.getTag() == null)
 				edt.setTag(i);
 			edt.setOnTouchListener(new CustomListener());
-//			edt.setOnFocusChangeListener(new FocusChangeListener());
+			edt.setLayoutParams(edt.getLayoutParams());
 		}
-		outTouchCancelPrepare(getRootView());
-		animateHideKeyboard(false);
+		Collections.sort(edts, new Comparator<EditText>() {
+			@Override
+			public int compare(EditText e1, EditText e2) {
+				if ((Integer)e1.getTag() > (Integer)e2.getTag()) {
+					return 1;
+				}
+				return -1;
+			}
+		});
+//		animateHideKeyboard(false);
 		isPreparead = true;
-		hideSystemInputMethod(edts.get(0));
+//		hideSystemInputMethod(edts.get(0));
+		Log.e(" --- "," add text prepare count = "+edts.size());
 		return this;
 	}
-
-	private class FocusChangeListener implements OnFocusChangeListener {
-		@Override
-		public void onFocusChange(View v, boolean hasFocus) {
-			EditText edt = (EditText)v;
-			if(hasFocus){
-//				beforeText = edt.getText().toString();
-//				if (!beforeText.equals("")) {
-//					if(edt.isSelected()){
-//						edt.setSelected(false);
-//						edt.setSelection(beforeText.length());
-//						edt.setSelectAllOnFocus(false);
-//					}else{
-//						edt.setSelectAllOnFocus(true);
-//						edt.setSelection(0,beforeText.length());
-//						edt.setSelected(true);
-//					}
-//				}
-			}else{
-				edt.setSelected(false);
-				edt.setSelectAllOnFocus(false);
-			}
-
-		}
-
-	}
-
 
 	public void show() {
 
@@ -262,6 +215,7 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 
 	@SuppressLint("NewApi")
 	private void animateShowKeyboard(boolean animate) {
+		animate = false;
 		setLabelState(getkey(-4));
 		for(int i=0; i< edts.size() ; i++){
 			Log.e(" *-*--* ","index = "+ i + " ,tag = "+edts.get(i).getTag());
@@ -291,7 +245,7 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 
 	@SuppressLint("NewApi")
 	private void animateHideKeyboard(boolean animate) {
-		Log.e(" --- "," --- animateHideKeyboard ---");
+		animate = false;
 		int visibility = keyboardView.getVisibility();
 		if (visibility == View.VISIBLE) {
 			if (animate) {
@@ -373,12 +327,7 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 		int H = getScrenHeight();
 		int keyboardHeight = getViewHeight(keyboardView);
 		int[] location = new int[2];
-//		EditText edt = edts.get(mIndex);
-		EditText edt = null;
-		for(EditText editText : edts){
-			if((Integer)editText.getTag() == mIndex)
-				edt = editText;
-		}
+		EditText edt = edts.get(mIndex);
 		edt.getLocationOnScreen(location);
 		final int y = location[1];
 		final int height = getViewHeight(edt);
@@ -389,16 +338,13 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 			final ScrollView scrollView = (ScrollView) getRootView()
 					.getParent();
 			final int d = keyboardHeight - (H - Y) + scrollView.getScrollY() + 20;
-			 Log.e("CustomKeyboard",
-			 "y = "+y+", height = "+height+", keyboardH = "+keyboardHeight+", d = "+d);
-			if (isScrollAtBottom(scrollView)) {// 滚动到底部，
-
+			if (isScrollAtBottom(scrollView)  && d > 0) {// 滚动到底部，
 				if (Y > (H - keyboardHeight)) {
 					getRootView().scrollBy(0, d);
 					scrollDis += d;
 				}
 			} else {// 还没滚动到底部
-				if (Y > (H - keyboardHeight)) {
+				if (Y > (H - keyboardHeight)  && d > 0) {
 					scrollView.post(new Runnable() {
 						@Override
 						public void run() {
@@ -407,38 +353,35 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 					});
 				}
 			}
-		} /*else if(hasListView()){
+		} else if(hasListView()){
 			final ListView listview = getListView();
 			if(listview == null) return;
-			final int d = keyboardHeight - (H - Y) + 20;
-			Log.e("CustomKeyboard",
-					"y = "+y+", height = "+height+", keyboardH = "+keyboardHeight+", d = "+d);
-			if(isScrollAtBottom(listview)){
+			final int d = keyboardHeight - (H - Y)  + 20;
+			if(isScrollAtBottom(listview)  && d > 0){
+				Log.e("CustomKeyboard",">>>scroll at bottom Y = "+Y+", keyboardH = "+keyboardHeight+", d = "+d);
 				getRootView().scrollBy(0, d);
 				scrollDis += d;
 			}else{
-				if (Y > (H - keyboardHeight)) {
+				if (Y > (H - keyboardHeight) && d > 0) {
+					Log.e("CustomKeyboard",">>>listview can scroll Y = "+Y+", keyboardH = "+keyboardHeight+", d = "+d);
 					listview.post(new Runnable() {
 						@Override
 						public void run() {
-							listview.setScrollY(d);
+							listview.smoothScrollBy(d,100);
 						}
 					});
 				}
 			}
 
-		}*/ else{// 不在ScrollView布局中
+		}else {// 不在ScrollView布局中
 			ViewGroup root = getRootView();
 			int d = keyboardHeight - (H - Y);
-            Log.e("CustomKeyboard",
-                    "y = "+y+", height = "+height+", keyboardH = "+keyboardHeight+", d = "+d);
-			if (Y > (H - keyboardHeight)) {
+			if (Y > (H - keyboardHeight)  && d > 0) {
 				getRootView().scrollBy(0, d);
 				scrollDis += d;
 			}
 		}
 	}
-
 	private boolean hasListView(){
 		for(int i=0; i< getRootView().getChildCount(); i++){
 			if(getRootView().getChildAt(i) instanceof ListView){
@@ -459,20 +402,14 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 		return listview;
 	}
 
-
 	private void resetScroll() {
 		if (Math.abs(scrollDis) > 0) {
-//			if (getRootView().getParent() != null
-//					&& (getRootView().getParent() instanceof ScrollView)) {
-//				getRootView().scrollBy(0, -scrollDis);
-//			} else if(hasListView()){
-//                final ListView listview = getListView();
-//                if(listview == null) return;
-//                listview.scrollBy(0,-scrollDis);
-//            }else{
-//				getRootView().scrollBy(0, -scrollDis);
-//			}
-			getRootView().scrollBy(0, -scrollDis);
+			if (getRootView().getParent() != null
+					&& (getRootView().getParent() instanceof ScrollView)) {
+				getRootView().scrollBy(0, -scrollDis);
+			} else {
+				getRootView().scrollBy(0, -scrollDis);
+			}
 			scrollDis = 0;
 		}
 	}
@@ -533,17 +470,9 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 		Key key = getkey(-4);
 		if (key == null)
 			return;
-		EditText edit = null;
-		for(EditText editText : edts){
-			if((Integer)editText.getTag() == mIndex)
-				edit = editText;
-		}
-		if(edit != null) {
-			edit.clearFocus();
-			edit.clearComposingText();
-		}
-//		edts.get(mIndex).clearFocus();
-//		edts.get(mIndex).clearComposingText();
+		edts.get(mIndex).clearFocus();
+		edts.get(mIndex).clearComposingText();
+//		edts.get(mIndex).setLayoutParams(edts.get(mIndex).getLayoutParams());
 		if (key.label.equals("完成")) {
 			animateHideKeyboard(true);
 			if (extraEditText != null && extraEditText.isEnabled()) {
@@ -552,56 +481,25 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 						.getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.showSoftInput(extraEditText, InputMethodManager.SHOW_FORCED);
 			}
-//			else {
-//				EditText edt = edts.get(mIndex);
-//				edt.requestFocus();
-//				int x = edt.getText().toString().length();
-//				edt.setSelection(x, x);
-//			}
 		} else {
-//			EditText before = edts.get(mIndex);
-			EditText before = edit;
-			if(before != null)before.clearFocus();
-			Log.e("-- "," cur index = "+ mIndex);
-
-//			if (mIndex < edts.size()) {
-			if (mIndex != (Integer) edts.get(edts.size() - 1).getTag()) {
-				mIndex++;
-				Log.e("-- "," next index = "+ mIndex);
-//				EditText edt = edts.get(mIndex);
-				EditText edt = null;
-				for(EditText editText : edts){
-					if((Integer)editText.getTag() == mIndex) {
-						edt = editText;
-						break;
-					}
-				}
-				if(edt == null){
-					Log.e("-- "," next is null = "+ mIndex);
-					mIndex = edts.size() - 1;
-					setLabelState(key);
-					dealWithLabelState();
-				}else if (edt.isEnabled()) {
-					Log.e("-- "," next in not null = "+ mIndex);
-//					int inputType = edt.getInputType();
-//					edt.setInputType(InputType.TYPE_NULL);
-//					edt.setInputType(inputType);
-					edt.setFocusable(true);
-					edt.setLayoutParams(edt.getLayoutParams());
+			mIndex++;
+			if (mIndex < edts.size() && isViewVisible(edts.get(mIndex)) ) {
+				Log.e(" ----- ","edit visible request focus");
+				EditText edt = edts.get(mIndex);
+				if (edt.isEnabled()) {
+//					edt.setLayoutParams(edt.getLayoutParams());
 					edt.requestFocus();
 					edt.requestFocusFromTouch();
-					caculateToScroll();
-
 					beforeText = edt.getText().toString();
 					if (!beforeText.equals("")) {
 						edt.setSelection(beforeText.length());
 					}
-//					edt.setSelected(true);
-//					edt.selectAll();
+					caculateToScroll();
 				} else {
 					dealWithLabelState();
 				}
 			} else {
+				Log.e(" ----- ","edit not visible hide keyboard");
 				mIndex = edts.size() - 1;
 				setLabelState(key);
 				dealWithLabelState();
@@ -645,9 +543,8 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 					animateHideKeyboard(true);
 					return false;
 				}
-//				mIndex = edts.indexOf((EditText) view);
-				mIndex = (Integer) view.getTag();
-				Log.e(" ----- "," --- size = "+edts.size());
+				mIndex = edts.indexOf((EditText) view);
+				Log.e(" ---- "," touch index =  "+mIndex);
 				EditText edt = ((EditText) view);
 				edt.setLayoutParams(edt.getLayoutParams());
 				hideSystemInputMethod(edt);
@@ -656,15 +553,6 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 				beforeText = edt.getText().toString();
 				if (!beforeText.equals("")) {
 					edt.setSelection(beforeText.length());
-//					if(edt.isSelected()){
-//						edt.setSelected(false);
-//						edt.setSelection(beforeText.length());
-//						edt.setSelectAllOnFocus(false);
-//					}else{
-//						edt.setSelectAllOnFocus(true);
-//						edt.setSelection(0,beforeText.length());
-//						edt.setSelected(true);
-//					}
 				}
 				return true;
 			}
@@ -675,17 +563,12 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 	@Override
 	public void onKey(int primaryCode, int[] keyCodes) {
 		if (primaryCode == -4) {// 完成
-			// animateHideKeyboard(true);
 			dealWithLabelState();
 			return;
 		} else {
-//			EditText editText = edts.get(mIndex);
-			EditText editText = null;
-			for(EditText e : edts){
-				if((Integer)e.getTag() == mIndex)
-					editText = e;
-			}
+			EditText editText = edts.get(mIndex);
 			Editable et = editText.getText();
+			editText.setLayoutParams(editText.getLayoutParams());
 			if (!beforeText.equals("") &&
 					primaryCode != Keyboard.KEYCODE_DELETE &&
 					editText.isSelected()) {
@@ -695,7 +578,6 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 			int start = editText.getSelectionStart();
 			if (primaryCode == Keyboard.KEYCODE_DELETE) {
 				if (et != null && et.length() > 0) {
-					// editText.setSelectAllOnFocus(false);
 					editText.setSelection(et.length());
 					if (start > 0) {
 						et.delete(start - 1, start);
@@ -706,9 +588,9 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 			} else {
 				if (editText.isEnabled()) {
 					//通过反射获取变量值
-                    char[] mAccepted = (char[])getValue((DigitsKeyListener)editText.getKeyListener(),"mAccepted");
-                    for(char ch : mAccepted){
-                        if(Character.toString((char) primaryCode).equals(String.valueOf(ch))){
+					char[] mAccepted = (char[])getValue((DigitsKeyListener)editText.getKeyListener(),"mAccepted");
+					for(char ch : mAccepted){
+						if(Character.toString((char) primaryCode).equals(String.valueOf(ch))){
 							//如果遇到点击后不能输入的问题，就换成下面注释的语句
 							et.insert(start, Character.toString((char) primaryCode));
 //							StringBuffer stringBuffer = new StringBuffer(editText.getText().toString());
@@ -716,38 +598,38 @@ public class CustomKeyboard extends InputMethodService implements OnKeyboardActi
 //                            editText.setText(stringBuffer.toString());
 //							if(start < editText.getText().toString().length())
 //								editText.setSelection(start +1);
-                        }
-                    }
+						}
+					}
 				}
 			}
 		}
 	}
 
 
-    public static Object getValue(Object instance, String fieldName) {
-        Field field = null;
-        try {
-            field = getField(instance.getClass(), fieldName);
-            // 参数值为true，禁用访问控制检查
-            field.setAccessible(true);
-            return field.get(instance);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    public static Field getField(Class thisClass, String fieldName) throws NoSuchFieldException {
-        if (fieldName == null) {
-            throw new NoSuchFieldException("Error field !");
-        }
-        Field field = thisClass.getDeclaredField(fieldName);
-        return field;
-    }
+	public static Object getValue(Object instance, String fieldName) {
+		Field field = null;
+		try {
+			field = getField(instance.getClass(), fieldName);
+			// 参数值为true，禁用访问控制检查
+			field.setAccessible(true);
+			return field.get(instance);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public static Field getField(Class thisClass, String fieldName) throws NoSuchFieldException {
+		if (fieldName == null) {
+			throw new NoSuchFieldException("Error field !");
+		}
+		Field field = thisClass.getDeclaredField(fieldName);
+		return field;
+	}
 
 
-    @Override
+	@Override
 	public void onPress(int arg0) {
 
 	}
