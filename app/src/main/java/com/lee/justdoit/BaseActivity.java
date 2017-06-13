@@ -115,8 +115,8 @@ public class BaseActivity extends AppCompatActivity {
             return;
         }else{
             tabLayout.setVisibility(View.VISIBLE);
+            addTabs(3);
         }
-        addTabs(3);
     }
 
     private void addTabs(int count){
