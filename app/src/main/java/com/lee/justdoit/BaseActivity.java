@@ -62,8 +62,12 @@ public class BaseActivity extends AppCompatActivity {
     protected void initParams(){
         bShowActionButton = true;
         bShowToolbar = true;
-        bShowTabLayout = true;
+        bShowTabLayout = false;
     }
+
+//    protected int getContentLayoutId(){
+//        return 0;
+//    }
 
     private void initViews(){
         rootLayout = (CoordinatorLayout) findViewById(R.id.base_coordinatorlayout);
