@@ -119,16 +119,16 @@ public class BaseActivity extends AppCompatActivity {
             return;
         }else{
             tabLayout.setVisibility(View.VISIBLE);
-            addTabs(3);
+//            addTabs(3);
         }
     }
 
-    private void addTabs(int count){
-        tabLayout.removeAllTabs();
-        for(int i=1; i<= count; i++){
-            tabLayout.addTab(tabLayout.newTab().setText("TAB"+i));
-        }
-    }
+//    private void addTabs(int count){
+//        tabLayout.removeAllTabs();
+//        for(int i=1; i<= count; i++){
+//            tabLayout.addTab(tabLayout.newTab().setText("TAB"+i));
+//        }
+//    }
 
     private void setAppBarHeight(int dp){
         if(dp < DEFAULT_TOOLBAR_HEIGHT) {

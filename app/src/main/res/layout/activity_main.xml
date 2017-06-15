@@ -17,10 +17,12 @@
             android:id="@+id/main_appbarlayout"
             android:layout_width="match_parent"
             android:layout_height="256dp">
-            <!-- enterAlwaysCollapsed- 这个标志定义了 View 是如何回到屏幕的。当你的 view 已经声明了一个最小高度(minHeight) 并且你使用了这个标志，
-                                       你的 View 只有在回到这个最小的高度的时候才会展开，只有当 view 已经到达顶部之后它才会重新展开全部高度。
-                 exitUntilCollapsed- View 将关闭滚动直到它被折叠起来(有 minHeight) 并且一直保持这样
-                 共四个参数，其他两个参看 activity_tab.xml
+            <!--
+            AppBarLayout里面的View，是通过app:layout_scrollFlags属性来控制，其中有4种Flag的类型：
+            Scroll：向下滚动时,被指定了这个属性的View会被滚出屏幕范围直到完全不可见的位置。
+            enterAlways：向上滚动时,这个View会随着滚动手势出现,直到恢复原来的位置。
+            enterAlwaysCollapsed： 当视图已经设置minHeight属性又使用此标志时，视图只能以最小高度进入，只有当滚动视图到达顶部时才扩大到完整高度。
+            exitUntilCollapsed： 滚动退出屏幕，最后折叠在顶端。
              -->
             <!-- 要想Toolbar能够滚动扩展或收缩，需要使用该layout包裹Toolbar，当使用该layout的时候，需要在java代码里
                  设置该layout的（收缩或扩展）标题
