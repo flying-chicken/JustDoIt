@@ -23,6 +23,7 @@
             enterAlways：向上滚动时,这个View会随着滚动手势出现,直到恢复原来的位置。
             enterAlwaysCollapsed： 当视图已经设置minHeight属性又使用此标志时，视图只能以最小高度进入，只有当滚动视图到达顶部时才扩大到完整高度。
             exitUntilCollapsed： 滚动退出屏幕，最后折叠在顶端。
+            注：如果想要滚动效果，则有滚动效果的控件放前面，没有的放后面
              -->
             <!-- 要想Toolbar能够滚动扩展或收缩，需要使用该layout包裹Toolbar，当使用该layout的时候，需要在java代码里
                  设置该layout的（收缩或扩展）标题

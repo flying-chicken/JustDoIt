@@ -114,7 +114,7 @@ public class TabActivity extends BaseActivity implements TabItemFragment.OnListF
 
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
-        Snackbar.make(rootLayout,item.toString(),Snackbar.LENGTH_SHORT);
+        Snackbar.make(rootLayout,item.details,Snackbar.LENGTH_SHORT).show();
     }
 
     private class MAdpapter extends FragmentPagerAdapter{

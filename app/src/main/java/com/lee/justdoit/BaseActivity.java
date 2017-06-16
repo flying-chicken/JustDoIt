@@ -116,11 +116,22 @@ public class BaseActivity extends AppCompatActivity {
         tabLayout = (TabLayout) appBarLayout.findViewById(R.id.base_tablayout);
         if(!bShowTabLayout){
             tabLayout.setVisibility(View.GONE);
-            return;
         }else{
             tabLayout.setVisibility(View.VISIBLE);
+            if(bCollapseTollbar){
+                setLayoutScrollFlags(toolbarLayout, AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+            }else {
+                setLayoutScrollFlags(toolbar, AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+            }
 //            addTabs(3);
         }
+    }
+
+    private void setLayoutScrollFlags(View view,int flags){
+        if(!(view.getLayoutParams() instanceof AppBarLayout.LayoutParams)) return;
+        AppBarLayout.LayoutParams lp = (AppBarLayout.LayoutParams) view.getLayoutParams();
+        lp.setScrollFlags(flags);
+        view.setLayoutParams(lp);
     }
 
 //    private void addTabs(int count){

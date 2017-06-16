@@ -26,7 +26,12 @@ public class TestActivity extends BaseActivity{
 
     @Override
     protected int getAppBarheight() {
-//        return 256;
-        return  super.getAppBarheight();
+        return 256;
+//        return  super.getAppBarheight();
+    }
+
+    @Override
+    protected void initParams() {
+        super.initParams();
     }
 }
