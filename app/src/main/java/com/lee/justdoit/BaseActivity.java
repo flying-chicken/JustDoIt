@@ -98,10 +98,12 @@ public class BaseActivity extends AppCompatActivity {
         if(!bShowToolbar){
             if(!bShowTabLayout){
                 appBarLayout.setVisibility(View.GONE);
-            }else if(bCollapseTollbar){
-                toolbarLayout.setVisibility(View.GONE);
-            }else{
-                toolbar.setVisibility(View.GONE);
+            }else {
+                if (bCollapseTollbar) {
+                    toolbarLayout.setVisibility(View.GONE);
+                } else {
+                    toolbar.setVisibility(View.GONE);
+                }
             }
         }
     }
