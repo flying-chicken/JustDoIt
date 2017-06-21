@@ -3,7 +3,7 @@
     android:id="@+id/tv_main_recycler_item"
     android:background="@android:drawable/list_selector_background"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="40dp"
     android:minHeight="40dp"
     android:gravity="center">
 

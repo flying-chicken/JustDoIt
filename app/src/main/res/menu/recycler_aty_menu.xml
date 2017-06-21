@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        app:showAsAction="always"
+        android:title="MODE" >
+        <menu >
+            <item
+                android:id="@+id/recycler_menu_vertical"
+                app:showAsAction="always"
+                android:title="VERTICAL" />
+            <item
+                android:id="@+id/recycler_menu_horizontal"
+                app:showAsAction="always"
+                android:title="HORIZONTAL" />
+            <item
+                android:id="@+id/recycler_menu_grad"
+                app:showAsAction="always"
+                android:title="GRID" />
+        </menu>
+    </item>
+</menu>

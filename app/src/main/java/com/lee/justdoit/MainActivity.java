@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         activities = new ArrayList<>();
         activities.add("com.lee.tablayout.TabActivity");
         activities.add("com.lee.glide.GlideActivity");
-        activities.add("");
+        activities.add("com.lee.recyclerview.RecyclerViewActivity");
         activities.add("com.lee.justdoit.TestActivity");
 
     }
