@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/main_drawer_item1"
+        android:icon="@mipmap/ic_launcher"
         app:showAsAction="always"
-        android:title="tabmode" >
+        android:title="MODE" >
         <menu>
             <item
                 android:id="@+id/tabmode_fixed"
@@ -18,7 +19,8 @@
     </item>
     <item
         android:icon="@mipmap/ic_launcher"
-        android:title="tabgravity">
+        app:showAsAction="always"
+        android:title="GRAVITY">
         <menu>
             <item
                 android:id="@+id/tabgravity_center"
