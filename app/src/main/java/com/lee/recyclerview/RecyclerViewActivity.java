@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.lee.justdoit.BaseActivity;
 import com.lee.justdoit.R;
+import com.lee.recyclerview.decoration.LinearDecoration;
 import com.lee.tablayout.dummy.DummyContent;
 
 public class RecyclerViewActivity extends BaseActivity {
@@ -34,8 +35,11 @@ public class RecyclerViewActivity extends BaseActivity {
 //        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
         recyclerView.setLayoutManager(new GridLayoutManager(this,4,LinearLayoutManager.VERTICAL,false));
 
+//        recyclerView.addItemDecoration(new LinearDecoration(this,LinearDecoration.HORIZONTAL));
+//        recyclerView.addItemDecoration(new LinearDecoration(this,LinearDecoration.VERTICAL));
 //        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.HORIZONTAL));
 //        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(new LinearDecoration(this,LinearDecoration.GRID));
     }
 
     @Override
