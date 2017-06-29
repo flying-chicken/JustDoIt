@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -11,6 +12,7 @@ import android.graphics.PathEffect;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.Nullable;
+import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -42,6 +44,7 @@ public class AudioBiu extends View{
     private Path mDashPath;
     private float mProgress;
     private Bitmap mImage;
+    private int mColor;
 
     public AudioBiu(Context context) {
         super(context);
@@ -70,7 +73,17 @@ public class AudioBiu extends View{
         mDashPath = new Path();
         mProgress = 0;
         mImage = BitmapFactory.decodeResource(getResources(), R.mipmap.audio_16);
-
+        Palette.from(mImage).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                Palette.Swatch swatch = palette.getVibrantSwatch();
+                if(swatch != null){
+                    mColor = swatch.getRgb();
+                }else{
+                    mColor = getResources().getColor(R.color.colorAccent);
+                }
+            }
+        });
     }
 
     private void initPaint(){
