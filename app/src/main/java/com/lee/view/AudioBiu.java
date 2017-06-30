@@ -117,7 +117,7 @@ public class AudioBiu extends View{
 
     private void initRect(){
         mImgRect = new RectF(PADDING,0,PADDING+mImage.getWidth(),0);
-        mDotRadius = dip2px(4);
+        mDotRadius = dip2px(5);
         mDotCenter = new PointF(mImgRect.right+PADDING+mDotRadius,0);
         mDotRect = new RectF();
         mProgressRect = new RectF();
@@ -152,6 +152,7 @@ public class AudioBiu extends View{
         mDotCenter.set(mDotCenter.x, getHeight()/2);
         mDotRect.set(mDotCenter.x-mDotRadius, mDotCenter.y-mDotRadius, mDotCenter.x+mDotRadius, mDotCenter.y+mDotRadius);
         mProgressRect.set(mDotCenter.x, (getHeight()-dip2px(2))/2, getWidth()-PADDING, (getHeight()+dip2px(2))/2);
+        mProgress = mProgressRect.width();
     }
 
     @Override
@@ -226,7 +227,7 @@ public class AudioBiu extends View{
         if(mTouchObject == OBJECT_IMG){
             mImgTouched = true;
         }else if(mTouchObject == OBJECT_DOT){
-            mDotRadius = dip2px(7);
+            mDotRadius = dip2px(8);
         }
         invalidate();
     }
@@ -235,7 +236,7 @@ public class AudioBiu extends View{
         if(mTouchObject == OBJECT_IMG){
             mImgTouched = false;
         }else if(mTouchObject == OBJECT_DOT){
-            mDotRadius = dip2px(4);
+            mDotRadius = dip2px(5);
         }
         invalidate();
         mTouchObject = OBJECT_NULL;
