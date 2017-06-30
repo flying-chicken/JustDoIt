@@ -151,7 +151,7 @@ public class AudioBiu extends View{
         mImgRect.set(PADDING, (getHeight()-mImage.getHeight())/2, mImage.getWidth()+PADDING, (getHeight()+mImage.getHeight())/2);
         mDotCenter.set(mDotCenter.x, getHeight()/2);
         mDotRect.set(mDotCenter.x-mDotRadius, mDotCenter.y-mDotRadius, mDotCenter.x+mDotRadius, mDotCenter.y+mDotRadius);
-        mProgressRect.set(mDotCenter.x, (getHeight()-dip2px(2))/2, getWidth()-PADDING, (getHeight()+dip2px(2))/2);
+        mProgressRect.set(mDotCenter.x, (getHeight()-dip2px(1))/2, getWidth()-PADDING, (getHeight()+dip2px(1))/2);
         mProgress = mProgressRect.width();
     }
 
