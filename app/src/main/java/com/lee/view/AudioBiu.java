@@ -180,14 +180,15 @@ public class AudioBiu extends View {
     private void drawImg(Canvas c) {
         c.save();
         if (mImgTouched) {
-            c.rotate(-35, mImgRect.left, getHeight() / 2);
+            c.rotate(-30, mImgRect.left, getHeight() / 2);
         }
         c.drawBitmap(mImage, mImgRect.left, mImgRect.top, mImgPaint);
         c.restore();
     }
 
     private void drawDash(Canvas c) {
-        c.drawPath(mDashPath,mDashPaint);
+        if(mImgTouched)
+            c.drawPath(mDashPath,mDashPaint);
     }
 
     private void drawProgress(Canvas c) {
@@ -300,5 +301,55 @@ public class AudioBiu extends View {
                 break;
         }
         Log.e(TAG, "-- " + objectName +" "+ log + " --");
+    }
+
+    public class DashBuilder{
+        public static final int DIR_LEFT = 33;
+        public static final int DIR_RIGHT = 44;
+        public static final int DIR_STOP = 55;
+
+        private PointF dStartPoint, dEndPoint;
+        private Path dPath;
+        private int dDir;
+        private int dX;
+        private boolean canMove = false;
+
+        public DashBuilder(PointF start,PointF end){
+            dStartPoint = start;
+            dEndPoint = end;
+        }
+
+        //按住时，计算圆点X坐标，并计算path路径
+        public void move(){
+            while (canMove) {
+                switch (dDir) {
+                    case DIR_LEFT:
+                        dX -= 2;
+                        if(dX <= 0){
+                            dX = 0;
+                            dDir = DIR_RIGHT;
+                        }
+                        break;
+                    case DIR_RIGHT:
+                        dX += 2;
+                        if(dX >= 100){
+                            dX = 100;
+                            dDir = DIR_LEFT;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //假装是个抛物线. x: 圆点的x坐标
+        private void calculateDashPath(float x){
+            dPath.reset();
+            float cx = (x - dStartPoint.x) /2;
+            float cy = dStartPoint.y - (float)(1/1.732 * cx);
+            dPath.moveTo(dStartPoint.x,dStartPoint.y);
+            dPath.quadTo(cx,cy,x,dStartPoint.y);
+        }
     }
 }
