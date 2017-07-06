@@ -9,10 +9,10 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
-import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
@@ -59,15 +59,16 @@ public class AudioBiu extends View {
     private Bitmap mImage;
     private int mColor;
 
+    private DashBuilder dashBuilder;
+
     private LongPressRunnable mLongPressRunnable = new LongPressRunnable();
 
     private class LongPressRunnable implements Runnable {
-
         @Override
         public void run() {
             log(" is long pressed");
             mImgTouched = true;
-            postInvalidate();
+            dashBuilder.start(mDotCenter.x);
         }
     }
 
@@ -167,6 +168,7 @@ public class AudioBiu extends View {
         mDotRect.set(mDotCenter.x - mDotRadius, mDotCenter.y - mDotRadius, mDotCenter.x + mDotRadius, mDotCenter.y + mDotRadius);
         mProgressRect.set(mDotCenter.x, (getHeight() - dip2px(1)) / 2, getWidth() - PADDING, (getHeight() + dip2px(1)) / 2);
         mProgress = mProgressRect.width();
+        dashBuilder = new DashBuilder(new PointF(mImgRect.left, mDotCenter.y), new PointF(mProgressRect.left, mDotCenter.y), new PointF(mProgressRect.right, mDotCenter.y));
     }
 
     @Override
@@ -187,8 +189,10 @@ public class AudioBiu extends View {
     }
 
     private void drawDash(Canvas c) {
-        if(mImgTouched)
-            c.drawPath(mDashPath,mDashPaint);
+        if (mImgTouched) {
+//            c.drawPath(mDashPath, mDashPaint);
+            c.drawPath(dashBuilder.getPath(), mDashPaint);
+        }
     }
 
     private void drawProgress(Canvas c) {
@@ -215,12 +219,12 @@ public class AudioBiu extends View {
                     if (x > mProgressRect.left && x < mProgressRect.right) {
                         mDotCenter = new PointF(x, mDotCenter.y);
                         mDotRect.set(mDotCenter.x - mDotRadius, mDotCenter.y - mDotRadius, mDotCenter.x + mDotRadius, mDotCenter.y + mDotRadius);
-                        calculateDashPath(x);
                     }
                 } else if (mTouchObject == OBJECT_IMG) {
                     if (!mImgRect.contains(event.getX(), event.getY())) {
                         removeCallbacks(mLongPressRunnable);
                         mImgTouched = false;
+                        dashBuilder.stop();
                     }
                 }
                 invalidate();
@@ -253,15 +257,6 @@ public class AudioBiu extends View {
         }
     }
 
-    //假装是个抛物线. x: 圆点的x坐标
-    private void calculateDashPath(float x){
-        mDashPath.reset();
-        float cx = (x - mImgRect.left) /2;
-        float cy = mDotCenter.y - (float)(1/1.732 * cx);
-        mDashPath.moveTo(mImgRect.left,mDotCenter.y);
-        mDashPath.quadTo(cx,cy,x,mDotCenter.y);
-    }
-
     private void checkLongPress() {
         postDelayed(mLongPressRunnable, ViewConfiguration.getLongPressTimeout());
     }
@@ -269,6 +264,7 @@ public class AudioBiu extends View {
     private void doObjectTouchUp(MotionEvent e) {
         if (mTouchObject == OBJECT_IMG) {
             mImgTouched = false;
+            dashBuilder.stop();
             removeCallbacks(mLongPressRunnable);
         } else if (mTouchObject == OBJECT_DOT) {
             mDotRadius = dip2px(5);
@@ -300,56 +296,99 @@ public class AudioBiu extends View {
                 objectName = "OBJECT_NULL";
                 break;
         }
-        Log.e(TAG, "-- " + objectName +" "+ log + " --");
+        Log.e(TAG, "-- " + objectName + " " + log + " --");
     }
 
-    public class DashBuilder{
+    public class DashBuilder {
         public static final int DIR_LEFT = 33;
         public static final int DIR_RIGHT = 44;
         public static final int DIR_STOP = 55;
+        private static final float VELOCITY = 4;
 
-        private PointF dStartPoint, dEndPoint;
+        private PointF dStartPoint, dLeftPoint, dEndPoint;
         private Path dPath;
         private int dDir;
-        private int dX;
-        private boolean canMove = false;
+        private float dX;
 
-        public DashBuilder(PointF start,PointF end){
+        private static final int MSG_STOP = 1;
+        private static final int MSG_START = 2;
+        private Handler dHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_START:
+                        move(msg.arg1);
+                        break;
+                    case MSG_STOP:
+                        break;
+                }
+            }
+        };
+
+        /* start  left                  end
+         *  ·     ·--------------------·
+         */
+        public DashBuilder(PointF start, PointF left, PointF end) {
             dStartPoint = start;
+            dLeftPoint = left;
             dEndPoint = end;
+            dDir = DIR_RIGHT;
+            dPath = new Path();
+        }
+
+        private void start(float startX) {
+            log("left :" + dLeftPoint.toString() + ", end :" + dEndPoint.toString());
+            Message msg = dHandler.obtainMessage();
+            msg.what = MSG_START;
+            msg.arg1 = (int) startX;
+            dHandler.sendMessage(msg);
         }
 
         //按住时，计算圆点X坐标，并计算path路径
-        public void move(){
-            while (canMove) {
-                switch (dDir) {
-                    case DIR_LEFT:
-                        dX -= 2;
-                        if(dX <= 0){
-                            dX = 0;
-                            dDir = DIR_RIGHT;
-                        }
-                        break;
-                    case DIR_RIGHT:
-                        dX += 2;
-                        if(dX >= 100){
-                            dX = 100;
-                            dDir = DIR_LEFT;
-                        }
-                        break;
-                    default:
-                        break;
-                }
+        public void move(float startX) {
+            dX = startX;
+            switch (dDir) {
+                case DIR_LEFT:
+                    dX -= VELOCITY;
+                    if (dX <= dLeftPoint.x) {
+                        dX = dLeftPoint.x;
+                        dDir = DIR_RIGHT;
+                    }
+                    calculateDashPath(dX);
+                    start(dX);
+                    break;
+                case DIR_RIGHT:
+                    dX += VELOCITY;
+                    if (dX >= dEndPoint.x) {
+                        dX = dEndPoint.x;
+                        dDir = DIR_LEFT;
+                    }
+                    calculateDashPath(dX);
+                    start(dX);
+                    break;
+                default:
+                    dHandler.sendEmptyMessage(MSG_STOP);
+                    break;
             }
         }
 
         //假装是个抛物线. x: 圆点的x坐标
-        private void calculateDashPath(float x){
+        private void calculateDashPath(float x) {
             dPath.reset();
-            float cx = (x - dStartPoint.x) /2;
-            float cy = dStartPoint.y - (float)(1/1.732 * cx);
-            dPath.moveTo(dStartPoint.x,dStartPoint.y);
-            dPath.quadTo(cx,cy,x,dStartPoint.y);
+            float cx = (x - dStartPoint.x) / 2;
+            float cy = dStartPoint.y - (float) (1 / 1.732 * cx);
+            dPath.moveTo(dStartPoint.x, dStartPoint.y);
+            dPath.quadTo(cx, cy, x, dStartPoint.y);
+            postInvalidate();
+        }
+
+        private void stop() {
+            dDir = DIR_STOP;
+            dHandler.sendEmptyMessage(MSG_STOP);
+        }
+
+        public Path getPath() {
+            return dPath;
         }
     }
 }
