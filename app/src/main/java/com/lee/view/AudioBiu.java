@@ -309,6 +309,7 @@ public class AudioBiu extends View {
         private Path dPath;
         private int dDir;
         private float dX;
+        private DRunnable dRunnable = new DRunnable();
 
         private static final int MSG_STOP = 1;
         private static final int MSG_START = 2;
@@ -325,6 +326,15 @@ public class AudioBiu extends View {
             }
         };
 
+        private class DRunnable implements Runnable{
+            @Override
+            public void run() {
+                while (true) {
+                    Log.e(" --- ", "post run ...");
+                }
+            }
+        }
+
         /* start  left                  end
          *  ·     ·--------------------·
          */
@@ -338,6 +348,7 @@ public class AudioBiu extends View {
 
         private void start(float startX) {
             log("left :" + dLeftPoint.toString() + ", end :" + dEndPoint.toString());
+            post(dRunnable);
             Message msg = dHandler.obtainMessage();
             msg.what = MSG_START;
             msg.arg1 = (int) startX;
@@ -383,6 +394,7 @@ public class AudioBiu extends View {
         }
 
         private void stop() {
+            removeCallbacks(dRunnable);
             dDir = DIR_STOP;
             dHandler.sendEmptyMessage(MSG_STOP);
         }
