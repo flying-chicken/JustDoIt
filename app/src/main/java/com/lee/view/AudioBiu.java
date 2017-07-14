@@ -26,6 +26,7 @@ import android.view.WindowManager;
 
 import com.lee.justdoit.R;
 
+
 /**
  * Created by Administrator on 2017-06-29.
  */
@@ -200,7 +201,8 @@ public class AudioBiu extends View {
     }
 
     private void drawDot(Canvas c) {
-        c.drawCircle(mDotCenter.x, mDotCenter.y, mDotRadius, mDotPanit);
+        if(!mImgTouched)
+            c.drawCircle(mDotCenter.x, mDotCenter.y, mDotRadius, mDotPanit);
     }
 
     @Override
@@ -265,6 +267,8 @@ public class AudioBiu extends View {
         if (mTouchObject == OBJECT_IMG) {
             mImgTouched = false;
             dashBuilder.stop();
+            mDotCenter = new PointF(dashBuilder.getPoint().x,dashBuilder.getPoint().y);
+            mDotRect.set(mDotCenter.x - mDotRadius, mDotCenter.y - mDotRadius, mDotCenter.x + mDotRadius, mDotCenter.y + mDotRadius);
             removeCallbacks(mLongPressRunnable);
         } else if (mTouchObject == OBJECT_DOT) {
             mDotRadius = dip2px(5);
@@ -300,16 +304,15 @@ public class AudioBiu extends View {
     }
 
     public class DashBuilder {
-        public static final int DIR_LEFT = 33;
-        public static final int DIR_RIGHT = 44;
-        public static final int DIR_STOP = 55;
+        private static final int DIR_LEFT = 33;
+        private static final int DIR_RIGHT = 44;
+        private static final int DIR_STOP = 55;
         private static final float VELOCITY = 4;
 
         private PointF dStartPoint, dLeftPoint, dEndPoint;
         private Path dPath;
-        private int dDir;
+        private int dDir, tempDir;
         private float dX;
-        private DRunnable dRunnable = new DRunnable();
 
         private static final int MSG_STOP = 1;
         private static final int MSG_START = 2;
@@ -326,15 +329,6 @@ public class AudioBiu extends View {
             }
         };
 
-        private class DRunnable implements Runnable{
-            @Override
-            public void run() {
-                while (true) {
-                    Log.e(" --- ", "post run ...");
-                }
-            }
-        }
-
         /* start  left                  end
          *  ·     ·--------------------·
          */
@@ -343,12 +337,14 @@ public class AudioBiu extends View {
             dLeftPoint = left;
             dEndPoint = end;
             dDir = DIR_RIGHT;
+            tempDir = dDir;
             dPath = new Path();
         }
 
         private void start(float startX) {
+            if(!mImgTouched) return;
             log("left :" + dLeftPoint.toString() + ", end :" + dEndPoint.toString());
-            post(dRunnable);
+            dDir = tempDir;
             Message msg = dHandler.obtainMessage();
             msg.what = MSG_START;
             msg.arg1 = (int) startX;
@@ -364,6 +360,7 @@ public class AudioBiu extends View {
                     if (dX <= dLeftPoint.x) {
                         dX = dLeftPoint.x;
                         dDir = DIR_RIGHT;
+                        tempDir = dDir;
                     }
                     calculateDashPath(dX);
                     start(dX);
@@ -373,6 +370,7 @@ public class AudioBiu extends View {
                     if (dX >= dEndPoint.x) {
                         dX = dEndPoint.x;
                         dDir = DIR_LEFT;
+                        tempDir = dDir;
                     }
                     calculateDashPath(dX);
                     start(dX);
@@ -394,13 +392,16 @@ public class AudioBiu extends View {
         }
 
         private void stop() {
-            removeCallbacks(dRunnable);
             dDir = DIR_STOP;
             dHandler.sendEmptyMessage(MSG_STOP);
         }
 
         public Path getPath() {
             return dPath;
+        }
+
+        public PointF getPoint(){
+            return new PointF(dX,dStartPoint.y);
         }
     }
 }
