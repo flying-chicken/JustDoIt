@@ -1,5 +1,6 @@
 package com.lee.view;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
+import android.graphics.PathMeasure;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Handler;
@@ -37,7 +39,6 @@ public class AudioBiu extends View {
     private static final int OBJECT_DOT = 22;
     private static final int OBJECT_NULL = 0;
     private int SCREEN_WIDTH;
-    private int SCREEN_HEIGHT;
     private int PADDING;
 
     private int mTouchObject;
@@ -61,6 +62,7 @@ public class AudioBiu extends View {
     private int mColor;
 
     private DashBuilder dashBuilder;
+    private float mCurrCenter[];
 
     private LongPressRunnable mLongPressRunnable = new LongPressRunnable();
 
@@ -92,7 +94,6 @@ public class AudioBiu extends View {
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
         SCREEN_WIDTH = outMetrics.widthPixels;
-        SCREEN_HEIGHT = outMetrics.heightPixels;
 
 //        ViewConfiguration.getTapTimeout();
         PADDING = dip2px(8);
@@ -166,6 +167,7 @@ public class AudioBiu extends View {
         super.onLayout(changed, left, top, right, bottom);
         mImgRect.set(PADDING, (getHeight() - mImage.getHeight()) / 2, mImage.getWidth() + PADDING, (getHeight() + mImage.getHeight()) / 2);
         mDotCenter.set(mDotCenter.x, getHeight() / 2);
+        mCurrCenter = new float[]{mDotCenter.x,mDotCenter.y};
         mDotRect.set(mDotCenter.x - mDotRadius, mDotCenter.y - mDotRadius, mDotCenter.x + mDotRadius, mDotCenter.y + mDotRadius);
         mProgressRect.set(mDotCenter.x, (getHeight() - dip2px(1)) / 2, getWidth() - PADDING, (getHeight() + dip2px(1)) / 2);
         mProgress = mProgressRect.width();
@@ -201,8 +203,24 @@ public class AudioBiu extends View {
     }
 
     private void drawDot(Canvas c) {
-        if(!mImgTouched)
-            c.drawCircle(mDotCenter.x, mDotCenter.y, mDotRadius, mDotPanit);
+        if(!mImgTouched) {
+            c.drawCircle(mCurrCenter[0], mCurrCenter[1], mDotRadius, mDotPanit);
+            mDotCenter.set(mCurrCenter[0], mCurrCenter[1]);
+        }
+//            c.drawCircle(mDotCenter.x, mDotCenter.y, mDotRadius, mDotPanit);
+    }
+
+    private void biu(){
+        ValueAnimator anim = ValueAnimator.ofFloat(0,dashBuilder.getLength());
+        anim.setDuration(1000);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                dashBuilder.getPathMeasure().getPosTan((float)valueAnimator.getAnimatedValue(),mCurrCenter,null);
+                postInvalidate();
+            }
+        });
+        anim.start();
     }
 
     @Override
@@ -269,6 +287,7 @@ public class AudioBiu extends View {
             dashBuilder.stop();
             mDotCenter = new PointF(dashBuilder.getPoint().x,dashBuilder.getPoint().y);
             mDotRect.set(mDotCenter.x - mDotRadius, mDotCenter.y - mDotRadius, mDotCenter.x + mDotRadius, mDotCenter.y + mDotRadius);
+            biu();
             removeCallbacks(mLongPressRunnable);
         } else if (mTouchObject == OBJECT_DOT) {
             mDotRadius = dip2px(5);
@@ -303,7 +322,7 @@ public class AudioBiu extends View {
         Log.e(TAG, "-- " + objectName + " " + log + " --");
     }
 
-    public class DashBuilder {
+    private class DashBuilder {
         private static final int DIR_LEFT = 33;
         private static final int DIR_RIGHT = 44;
         private static final int DIR_STOP = 55;
@@ -313,6 +332,8 @@ public class AudioBiu extends View {
         private Path dPath;
         private int dDir, tempDir;
         private float dX;
+
+        private PathMeasure dPathMeasure;
 
         private static final int MSG_STOP = 1;
         private static final int MSG_START = 2;
@@ -324,6 +345,7 @@ public class AudioBiu extends View {
                         move(msg.arg1);
                         break;
                     case MSG_STOP:
+                        dPathMeasure.setPath(dPath,false);
                         break;
                 }
             }
@@ -332,13 +354,14 @@ public class AudioBiu extends View {
         /* start  left                  end
          *  ·     ·--------------------·
          */
-        public DashBuilder(PointF start, PointF left, PointF end) {
+        private DashBuilder(PointF start, PointF left, PointF end) {
             dStartPoint = start;
             dLeftPoint = left;
             dEndPoint = end;
             dDir = DIR_RIGHT;
             tempDir = dDir;
             dPath = new Path();
+            dPathMeasure = new PathMeasure();
         }
 
         private void start(float startX) {
@@ -352,7 +375,7 @@ public class AudioBiu extends View {
         }
 
         //按住时，计算圆点X坐标，并计算path路径
-        public void move(float startX) {
+        private void move(float startX) {
             dX = startX;
             switch (dDir) {
                 case DIR_LEFT:
@@ -396,12 +419,20 @@ public class AudioBiu extends View {
             dHandler.sendEmptyMessage(MSG_STOP);
         }
 
-        public Path getPath() {
+        private Path getPath() {
             return dPath;
         }
 
-        public PointF getPoint(){
+        private PointF getPoint(){
             return new PointF(dX,dStartPoint.y);
+        }
+
+        private float getLength(){
+            return dPathMeasure.getLength();
+        }
+
+        private PathMeasure getPathMeasure(){
+            return dPathMeasure;
         }
     }
 }
