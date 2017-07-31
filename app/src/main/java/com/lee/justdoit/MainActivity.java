@@ -62,12 +62,13 @@ public class MainActivity extends AppCompatActivity {
         items.add("Glide");
         items.add("RecyclerView");
         items.add("TestActivity");
+        items.add("SelectImageActivity");
         activities = new ArrayList<>();
         activities.add("com.lee.tablayout.TabActivity");
         activities.add("com.lee.glide.GlideActivity");
         activities.add("com.lee.recyclerview.RecyclerViewActivity");
         activities.add("com.lee.justdoit.TestActivity");
-
+        activities.add("com.lee.photo.SelectImageActivity");
     }
 
     private void setToolbar(){

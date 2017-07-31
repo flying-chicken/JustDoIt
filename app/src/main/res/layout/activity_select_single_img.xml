@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.lee.photo.SelectImageActivity"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <Button
+        android:id="@+id/img_take_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="takePhoto"
+        android:text="TAKE PHOTO"/>
+    <Button
+        android:id="@+id/img_select_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="selectImage"
+        android:text="SELECT IMAGE"/>
+
+    <ImageView
+        android:id="@+id/img_img"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerInside"/>
+</LinearLayout>
