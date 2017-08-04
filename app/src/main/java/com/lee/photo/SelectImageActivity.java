@@ -57,7 +57,18 @@ public class SelectImageActivity extends BaseActivity {
         }
         // 定义拍照后存放图片的文件位置和名称，使用完毕后可以方便删除
         file = new File(Environment.getExternalStorageDirectory(), "temp.jpg");
-        file.delete();// 清空之前的文件
+        if(file.exists()) {
+            file.delete();// 清空之前的文件
+        }
+
+        imageView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setDataAndType(getUri(file),"image/*");
+                startActivity(i);
+            }
+        });
     }
 
 
