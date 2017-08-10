@@ -4,9 +4,9 @@
     package="com.lee.justdoit">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
 
     <application
         android:allowBackup="true"
@@ -47,7 +47,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".TestActivity" />
         <activity android:name="com.lee.recyclerview.RecyclerViewActivity" />
-        <activity android:name="com.lee.photo.SelectImageActivity"></activity>
+        <activity android:name="com.lee.photo.SelectImageActivity" />
+        <activity android:name="com.lee.photo.SelectMultipleImageActivity"></activity>
     </application>
 
 </manifest>

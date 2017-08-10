@@ -1,43 +1,26 @@
 package com.lee.photo;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.content.ContentUris;
-import android.content.ContentValues;
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.lee.justdoit.BaseActivity;
 import com.lee.justdoit.R;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class SelectImageActivity extends BaseActivity {
-    private static final int TAKE_PHOTO = 11;
-    private static final int CHOOSE_PHOTO = 22;
-    private static final int CROP_PHOTO = 33;
     private ImageView imageView;
-    private Uri imageUri;
-    private File imageFile;
     // 拍照成功，读取相册成功，裁减成功
     private final int  ALBUM_OK = 1, CAMERA_OK = 2,CUT_OK = 3;
     private File file;
@@ -50,11 +33,6 @@ public class SelectImageActivity extends BaseActivity {
         imageView = (ImageView) findViewById(R.id.img_img);
         // new一个File用来存放拍摄到的照片
         // 通过getExternalStorageDirectory方法获得手机系统的外部存储地址
-        imageFile = new File(Environment.getExternalStorageDirectory(), "tempImage.jpg");
-        // 如果存在就删了重新创建
-        if (imageFile.exists()) {
-            imageFile.delete();
-        }
         // 定义拍照后存放图片的文件位置和名称，使用完毕后可以方便删除
         file = new File(Environment.getExternalStorageDirectory(), "temp.jpg");
         if(file.exists()) {
@@ -90,18 +68,9 @@ public class SelectImageActivity extends BaseActivity {
         // 下面这句指定调用相机拍照后的照片存储的路径
 //        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, getUri(file));
+        //这里加入flag
+        cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(cameraIntent, CAMERA_OK);// CAMERA_OK是用作判断返回结果的标识
-//        // 将存储地址转化成uri对象
-////        imageUri = getUri(imageFile);
-//        imageUri = Uri.fromFile(imageFile);
-//        // 设置打开照相的Intent
-//        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-//        // 设置相片的输出uri为刚才转化的imageUri
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-//        //这里加入flag
-//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//        // 开启相机程序，设置requestCode为TOKE_PHOTO
-//        startActivityForResult(intent, TAKE_PHOTO);
     }
 
     private Uri getUri(File file){
@@ -122,25 +91,12 @@ public class SelectImageActivity extends BaseActivity {
          * intent.setType(""image/*");设置数据类型
          * 要限制上传到服务器的图片类型时可以直接写如："image/jpeg 、 image/png等的类型"
          */
+        //添加读取URI权限
+        albumIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         albumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         startActivityForResult(albumIntent, ALBUM_OK);
 //        requestReadExternalPermission();
     }
-
-//    private void selectImage(){
-//        //转换成File Uri
-////        imageUri = getUri(imageFile);
-//        imageUri = Uri.fromFile(imageFile);
-//        //开启选择内容界面
-//        Intent intent = new Intent(Intent.ACTION_PICK);
-//        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
-//        //添加读取URI权限
-//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//        //设置输出位置
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-//        //开始选择
-//        startActivityForResult(intent, CHOOSE_PHOTO);
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -168,7 +124,6 @@ public class SelectImageActivity extends BaseActivity {
                  * 非空判断大家一定要验证，如果不验证的话， 在剪裁之后如果发现不满意，
                  * 要重新裁剪，丢弃 当前功能时，会报NullException
                  */
-
                 if (data != null) {
                     setPicToView(data);
                 }else
@@ -189,8 +144,6 @@ public class SelectImageActivity extends BaseActivity {
      * @param type         类别：相机，相册
      */
     public void clipPhoto(Uri uri,int type) {
-
-
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         // 下面这个crop = true是设置在开启的Intent中设置显示的VIEW可裁剪
@@ -224,7 +177,6 @@ public class SelectImageActivity extends BaseActivity {
      * @param picdata　　　　　　　　　　资源
      */
     private void setPicToView(Intent picdata) {
-
         try
         {
             Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(picdata.getData()));
@@ -293,50 +245,7 @@ public class SelectImageActivity extends BaseActivity {
 //        }
 //    }
 
-//    private void crop(Uri uri){
-//        // 设置intent为启动裁剪程序
-//        Intent intent = new Intent("com.android.camera.action.CROP");
-//        // 设置Data为刚才的imageUri和Type为图片类型
-//        intent.setDataAndType(uri, "image/*");
-//        // 设置可缩放
-//        intent.putExtra("scale", true);
-//        // aspectX aspectY 是宽高的比例，这里设置的是正方形（长宽比为1:1）
-//        intent.putExtra("aspectX", 1);
-//        intent.putExtra("aspectY", 1);
-//        // outputX outputY 是裁剪图片宽高
-//        intent.putExtra("outputX", 200);
-//        intent.putExtra("outputY", 200);
-//        intent.putExtra("return-data",false);
-//        // 设置输出地址为imageUri
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-//        // 开启裁剪,设置requestCode为CROP_PHOTO
-//        startActivityForResult(intent, CROP_PHOTO);
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if(resultCode == RESULT_OK){
-//            if(requestCode == TAKE_PHOTO){
-//                crop(data.getData());
-//            }else if(requestCode == CHOOSE_PHOTO){
-////                handleImageOnKitkat(data);
-//                crop(imageUri);
-//            }else if(requestCode == CROP_PHOTO){
-//                Bitmap bitmap;
-//                try {
-//                    //通过BitmapFactory将imageUri转化成bitmap
-////                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-//                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
-//                    //设置显示
-//                    imageView.setImageBitmap(bitmap);
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-//
+
 //    @TargetApi(Build.VERSION_CODES.KITKAT)
 //    private void handleImageOnKitkat(Intent data) {
 //        String imagePath = null;
