@@ -1,9 +1,7 @@
 package com.lee.recyclerview;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -31,15 +29,15 @@ public class RecyclerViewActivity extends BaseActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         adapter = new RecyclerAdapter(this, DummyContent.ITEMS);
         recyclerView.setAdapter(adapter);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 //        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        recyclerView.setLayoutManager(new GridLayoutManager(this,4,LinearLayoutManager.VERTICAL,false));
+//        recyclerView.setLayoutManager(new GridLayoutManager(this,4,LinearLayoutManager.VERTICAL,false));
 
 //        recyclerView.addItemDecoration(new LinearDecoration(this,LinearDecoration.HORIZONTAL));
 //        recyclerView.addItemDecoration(new LinearDecoration(this,LinearDecoration.VERTICAL));
 //        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.HORIZONTAL));
 //        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        recyclerView.addItemDecoration(new LinearDecoration(this,LinearDecoration.GRID));
+        recyclerView.addItemDecoration(new LinearDecoration(this,LinearDecoration.VERTICAL));
     }
 
     @Override
