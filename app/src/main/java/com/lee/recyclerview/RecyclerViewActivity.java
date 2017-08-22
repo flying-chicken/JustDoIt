@@ -98,9 +98,9 @@ public class RecyclerViewActivity extends BaseActivity {
         if(type == RecyclerAdapter.LINEAR){
             recyclerView.setLayoutManager(new LinearLayoutManager(this, orientation, false));
         }else if(type == RecyclerAdapter.GRID){
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 3, OrientationHelper.VERTICAL, false));
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 3, orientation, false));
         }else{
-            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, OrientationHelper.VERTICAL));
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, orientation));
         }
 //        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, orientation));
         recyclerView.removeItemDecoration(recyclerView.getItemDecorationAt(0));

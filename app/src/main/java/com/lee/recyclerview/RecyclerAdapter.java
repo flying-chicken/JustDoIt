@@ -75,6 +75,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MViewH
     }
 
     private void setViewheight(View view){
+        if(type == LINEAR) return;
         if(orientation == OrientationHelper.HORIZONTAL){
             RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) view.getLayoutParams();
             lp.height = RecyclerView.LayoutParams.MATCH_PARENT;
@@ -85,9 +86,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MViewH
             }
             view.setLayoutParams(lp);
         }else {
-            if (type != STAGGERED) return;
             RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) view.getLayoutParams();
-            lp.height = 80 + (int) (Math.random() * 200);
+            lp.width = RecyclerView.LayoutParams.MATCH_PARENT;
+            if(type == GRID){
+                lp.height = 240;
+            }else if(type == STAGGERED){
+                lp.height = 80 + (int) (Math.random() * 200);
+            }
             view.setLayoutParams(lp);
         }
     }
