@@ -2,6 +2,7 @@ package com.lee.recyclerview;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
@@ -19,13 +20,32 @@ import java.util.List;
  */
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MViewHolder> {
+    public static final int GRID = 11;
+    public static final int LINEAR = 22;
+    public static final int STAGGERED = 33;
+
     private Activity aty;
     private List<DummyContent.DummyItem> items = new ArrayList<>();
     private OnItemClickListener listener;
+    private int type;
+    private int orientation = OrientationHelper.VERTICAL;
 
-    public RecyclerAdapter(Activity aty, List<DummyContent.DummyItem> items){
+    public RecyclerAdapter(Activity aty, List<DummyContent.DummyItem> items, int type){
         this.aty = aty;
         this.items = items;
+        this.type = type;
+    }
+
+    public void setOrientation(int orientation){
+        this.orientation = orientation;
+    }
+
+    public void setType(int type){
+        this.type = type;
+    }
+
+    public int getType(){
+        return type;
     }
 
     public void setOnItemClickListener(OnItemClickListener l){
@@ -34,14 +54,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MViewH
 
     @Override
     public MViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = aty.getLayoutInflater().inflate(R.layout.layout_main_recycler_item,parent,false);
+        int id = type != LINEAR ? R.layout.grid_recycler_item : R.layout.layout_main_recycler_item;
+        View view = aty.getLayoutInflater().inflate(id, parent, false);
         MViewHolder vh = new MViewHolder(view);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(MViewHolder holder, int position) {
+        //不要在这里修改item的宽高，每次滚动会导致高度变化
         final DummyContent.DummyItem item = items.get(position);
+        setViewheight(holder.view);
         holder.textView.setText(item.id);
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +72,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MViewH
                 if(listener != null) listener.onItemClick(item);
             }
         });
+    }
+
+    private void setViewheight(View view){
+        if(orientation == OrientationHelper.HORIZONTAL){
+            RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) view.getLayoutParams();
+            lp.height = RecyclerView.LayoutParams.MATCH_PARENT;
+            if(type == GRID){
+                lp.width = 300;
+            }else if(type == STAGGERED){
+                lp.width = 200 + (int) (Math.random() * 200);
+            }
+            view.setLayoutParams(lp);
+        }else {
+            if (type != STAGGERED) return;
+            RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) view.getLayoutParams();
+            lp.height = 80 + (int) (Math.random() * 200);
+            view.setLayoutParams(lp);
+        }
     }
 
     @Override
@@ -63,6 +104,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MViewH
             super(itemView);
             view = itemView;
             textView = (TextView) itemView.findViewById(R.id.tv_main_recycler_item);
+            //如果为瀑布流式布局，可以在这里动态设置高度
+//            setViewheight(view);
         }
     }
 

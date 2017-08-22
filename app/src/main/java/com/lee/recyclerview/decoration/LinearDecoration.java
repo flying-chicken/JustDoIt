@@ -34,7 +34,7 @@ public class LinearDecoration extends RecyclerView.ItemDecoration {
         divider = a.getDrawable(0);
         a.recycle();
         setOrientation(orientation);
-        setDivier(context.getResources().getDrawable(R.drawable.list_divider));
+//        setDivier(context.getResources().getDrawable(R.drawable.list_divider));
     }
 
     public void setOrientation(int o){

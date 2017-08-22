@@ -2,21 +2,35 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        app:showAsAction="always"
-        android:title="MODE" >
-        <menu >
+        android:title="MODE"
+        app:showAsAction="always">
+        <menu>
             <item
-                android:id="@+id/recycler_menu_vertical"
-                app:showAsAction="always"
-                android:title="VERTICAL" />
-            <item
-                android:id="@+id/recycler_menu_horizontal"
-                app:showAsAction="always"
-                android:title="HORIZONTAL" />
+                android:id="@+id/recycler_menu_linear"
+                android:title="LINEAR"
+                app:showAsAction="always" />
             <item
                 android:id="@+id/recycler_menu_grad"
-                app:showAsAction="always"
-                android:title="GRID" />
+                android:title="GRID"
+                app:showAsAction="always" />
+            <item
+                android:id="@+id/recycler_menu_staggered"
+                android:title="STAGGERED"
+                app:showAsAction="always" />
+        </menu>
+    </item>
+    <item
+        android:title="ORI"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/recycler_menu_vertical"
+                android:title="VERTICAL"
+                app:showAsAction="always" />
+            <item
+                android:id="@+id/recycler_menu_horizontal"
+                android:title="HORIZONTAL"
+                app:showAsAction="always" />
         </menu>
     </item>
 </menu>
