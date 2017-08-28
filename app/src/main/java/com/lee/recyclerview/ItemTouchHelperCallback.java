@@ -14,7 +14,7 @@ import java.util.Collections;
  */
 
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
-    private RecyclerView.Adapter adapter;
+    private BaseRecyclerTouchAdapter adapter;
 
     //让Adapter实现该接口并调用对应方法
     public interface ItemTouchCallbackListener{
@@ -22,7 +22,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         void onItemSwipe(int position, int direction);
     }
 
-    public ItemTouchHelperCallback(RecyclerView.Adapter ad){
+    public ItemTouchHelperCallback(BaseRecyclerTouchAdapter ad){
         if(!(ad instanceof ItemTouchCallbackListener)){
             throw new IllegalStateException("RecyclerView.Adapter must implement ItemTouchHelperCallback.ItemTouchCallbackListener interface.");
         }
@@ -68,8 +68,9 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 Collections.swap(new ArrayList<String>(), i, i--);
             }
         }
+
         //通知Adapter发生变化
-//        adapter.notifyDataSetChanged();
+        adapter.onItemMove(fromPos,toPos);
         return true;
     }
 
@@ -78,7 +79,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         Log.e("---", "onSwiped: direction = "+direction);
         //通知Adapter发生变化
-//        adapter.notifyDataSetChanged();
+        adapter.onItemSwipe(viewHolder.getAdapterPosition(),direction);
     }
 
     @Override

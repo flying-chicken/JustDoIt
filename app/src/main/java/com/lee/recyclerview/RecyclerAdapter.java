@@ -19,7 +19,7 @@ import java.util.List;
  * Created by Administrator on 2017-06-21.
  */
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MViewHolder> {
+public class RecyclerAdapter extends BaseRecyclerTouchAdapter<RecyclerAdapter.MViewHolder> {
     public static final int GRID = 11;
     public static final int LINEAR = 22;
     public static final int STAGGERED = 33;
