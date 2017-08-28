@@ -13,6 +13,7 @@ import com.lee.justdoit.R;
 import com.lee.tablayout.dummy.DummyContent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -116,5 +117,21 @@ public class RecyclerAdapter extends BaseRecyclerTouchAdapter<RecyclerAdapter.MV
 
     public interface OnItemClickListener{
         void onItemClick(DummyContent.DummyItem item);
+    }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        if(fromPosition < toPosition){
+            Collections.swap(items,fromPosition, toPosition);
+//            for(int i=fromPosition; i<toPosition; i++){
+//                Collections.swap(items, i, i+1);
+//            }
+        }else{
+            Collections.swap(items, toPosition, fromPosition);
+//            for(int i=fromPosition; i>toPosition; i++){
+//                Collections.swap(items, i, i--);
+//            }
+        }
+        super.onItemMove(fromPosition, toPosition);
     }
 }

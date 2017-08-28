@@ -57,17 +57,18 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
         int fromPos = viewHolder.getAdapterPosition();
         int toPos = target.getAdapterPosition();
-        //这里循环从当前位置变换到目标位置，分别把中间所有的item的位置重新交换，可平滑移动效果
+        //这里循环从当前位置变换到目标位置，分别把中间所有的item的位置重新交换，可平滑移动效果(额，试了下效果，还是不要循环的好)
         //也可以去掉循环，直接用Collections.swap()方法
-        if(fromPos < toPos){
-            for(int i=fromPos; i<toPos; i++){
-                Collections.swap(new ArrayList<String>(), i, i+1);
-            }
-        }else{
-            for(int i=fromPos; i>toPos; i++){
-                Collections.swap(new ArrayList<String>(), i, i--);
-            }
-        }
+        //放到Adapter里面执行
+//        if(fromPos < toPos){
+//            for(int i=fromPos; i<toPos; i++){
+//                Collections.swap(new ArrayList<String>(), i, i+1);
+//            }
+//        }else{
+//            for(int i=fromPos; i>toPos; i++){
+//                Collections.swap(new ArrayList<String>(), i, i--);
+//            }
+//        }
 
         //通知Adapter发生变化
         adapter.onItemMove(fromPos,toPos);
